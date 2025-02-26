@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Homomorphic Encryption Demo</title>
+    <!-- 从 unpkg.com 引入 paillier-bigint.js -->
+    <script src="https://unpkg.com/paillier-bigint@3.4.3/dist/bundle.umd.js"></script>
+</head>
+<body>
+    
+    <h1>Register Password</h1>
+    <input type="text" id="password" placeholder="Enter password">
+    <button onclick="registerPassword()">Set Password</button>
+
+    <h1>Verify Password</h1>
+    <input type="text" id="verifyPassword" placeholder="Enter password to verify">
+    <button onclick="verifyPassword()">Verify Password</button>
+
+    <script src="/static/local_enc.js"></script>
+</body>
+</html>
