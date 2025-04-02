@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Secure User Profile</title>
+    <script src="https://unpkg.com/jsencrypt@3.3.2/bin/jsencrypt.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .profile-container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        h1 {
+            color: #333;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+        .profile-field {
+            margin-bottom: 10px;
+        }
+        .field-label {
+            font-weight: bold;
+        }
+        .logout-btn {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+    <script>
+        async function loadUserProfile() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+        
+        if (!username) {
+            document.getElementById('profile').innerHTML = '<p class="error-message">Error: No username provided.</p>';
+            return;
+        }
+        
+        // Get the private key from localStorage
+        const privateKey = localStorage.getItem('rsaPrivateKey');
+        if (!privateKey) {
+            document.getElementById('profile').innerHTML = '<p class="error-message">Error: No decryption key found. Please register again.</p>';
+            return;
+        }
+        
+        // Set up the decrypter
+        const rsaDecrypt = new JSEncrypt();
+        rsaDecrypt.setPrivateKey(privateKey);
+        
+        try {
+            console.log("Loading profile for:", username);
+            const response = await fetch(`/get_user_profile?username=${encodeURIComponent(username)}`);
+            const encryptedData = await response.json();
+            
+            if (encryptedData.error) {
+                document.getElementById('profile').innerHTML = `<p class="error-message">Error: ${encryptedData.error}</p>`;
+                return;
+            }
+            
+            console.log("Received encrypted data:", Object.keys(encryptedData));
+            
+            // Debug: log the available keys
+            console.log("Available fields:", Object.keys(encryptedData));
+            
+            // Try to decrypt each field and log the result
+            let firstName, lastName, age, profession;
+            
+            try {
+                firstName = rsaDecrypt.decrypt(encryptedData.encrypted_firstName);
+                console.log("First name decryption:", firstName ? "Success" : "Failed");
+            } catch (e) {
+                console.error("First name decryption error:", e);
+            }
+            
+            try {
+                lastName = rsaDecrypt.decrypt(encryptedData.encrypted_lastName);
+                console.log("Last name decryption:", lastName ? "Success" : "Failed");
+            } catch (e) {
+                console.error("Last name decryption error:", e);
+            }
+            
+            try {
+                age = rsaDecrypt.decrypt(encryptedData.encrypted_age);
+                console.log("Age decryption:", age ? "Success" : "Failed");
+            } catch (e) {
+                console.error("Age decryption error:", e);
+            }
+            
+            try {
+                profession = rsaDecrypt.decrypt(encryptedData.encrypted_profession);
+                console.log("Profession decryption:", profession ? "Success" : "Failed");
+            } catch (e) {
+                console.error("Profession decryption error:", e);
+            }
+            
+            // If any decryption failed, show error
+            if (!firstName || !lastName || !age || !profession) {
+                document.getElementById('profile').innerHTML = '<p class="error-message">Error: Could not decrypt user data. The key might not match.</p>';
+                return;
+            }
+            
+            // Display the profile
+            document.getElementById('profile').innerHTML = `
+                <div class="profile-container">
+                    <h1>Welcome, ${username}!</h1>
+                    <div class="profile-field">
+                        <span class="field-label">First Name:</span> ${firstName}
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Last Name:</span> ${lastName}
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Age:</span> ${age}
+                    </div>
+                    <div class="profile-field">
+                        <span class="field-label">Profession:</span> ${profession}
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            `;
+        } catch (error) {
+            console.error('Error loading user profile:', error);
+            document.getElementById('profile').innerHTML = '<p class="error-message">Error loading profile: ' + error.message + '</p>';
+        }
+    }
+    window.onload = function() {
+        loadUserProfile();
+    };
+    </script>
+</head>
+<body>
+    <div id="profile">
+        <p>Loading user profile...</p>
+    </div>
+</body>
+</html>

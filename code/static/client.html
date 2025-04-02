@@ -2,20 +2,89 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Homomorphic Encryption Demo</title>
-    <!-- 从 unpkg.com 引入 paillier-bigint.js -->
+    <title>Secure User Registration</title>
     <script src="https://unpkg.com/paillier-bigint@3.4.3/dist/bundle.umd.js"></script>
+    <script src="https://unpkg.com/jsencrypt@3.3.2/bin/jsencrypt.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        h1 {
+            color: #333;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    
-    <h1>Register Password</h1>
-    <input type="text" id="password" placeholder="Enter password">
-    <button onclick="registerPassword()">Set Password</button>
+    <div class="section">
+        <h1>Register</h1>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter username">
+        </div>
+        <div class="form-group">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" placeholder="First Name">
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" placeholder="Last Name">
+        </div>
+        <div class="form-group">
+            <label for="age">Age:</label>
+            <input type="number" id="age" placeholder="Age">
+        </div>
+        <div class="form-group">
+            <label for="profession">Profession:</label>
+            <input type="text" id="profession" placeholder="Profession">
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter password">
+        </div>
+        <button onclick="registerUser()">Register</button>
+    </div>
 
-    <h1>Verify Password</h1>
-    <input type="text" id="verifyPassword" placeholder="Enter password to verify">
-    <button onclick="verifyPassword()">Verify Password</button>
+    <div class="section">
+        <h1>Verify Password</h1>
+        <div class="form-group">
+            <label for="verifyUsername">Username:</label>
+            <input type="text" id="verifyUsername" placeholder="Enter username">
+        </div>
+        <div class="form-group">
+            <label for="verifyPassword">Password:</label>
+            <input type="password" id="verifyPassword" placeholder="Enter password to verify">
+        </div>
+        <button onclick="verifyPassword()">Verify</button>
+    </div>
 
-    <script src="/static/local_enc.js"></script>
+    <script src="/static/enhanced_enc.js"></script>
 </body>
 </html>
